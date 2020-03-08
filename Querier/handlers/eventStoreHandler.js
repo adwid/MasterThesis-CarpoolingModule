@@ -1,7 +1,7 @@
 const esConnection = require('../eventStore').connection();
 const db = require('./dbHandler');
 
-const streamName = "STREAM_NAME";
+const streamName = "carpooling";
 
 esConnection.subscribeToStream(streamName, false, onNewEvent)
     .then(_ => {

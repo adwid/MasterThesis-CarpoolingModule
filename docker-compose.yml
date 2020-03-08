@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+
+#
+#  EVENTSTORE
+#
+
+#  eventstore:
+#    image: eventstore/eventstore
+#    container_name: eventstore-node
+#    logging:
+#      driver: "none"
+#    ports:
+#      - "${EVENTSTORE_HTTP_CLIENT_PORT}:${ES_HTTP_PORT}"
+#      - "${EVENTSTORE_TCP_PORT}:${ES_TCP_PORT}"
+
+#
+# CARPOOLING
+#
+
+  carpooling-inbox:
+    container_name: carpooling-inbox
+    build: ./Inbox
+    volumes:
+      - "./Inbox:/app/src"
+    ports:
+      - "${CARPOOLING_INBOX_PORT}:${HOST_PORT}"
+#    depends_on:
+#      - eventstore
+    env_file:
+      - .env
+
+  carpooling-outbox:
+    container_name: carpooling-outbox
+    build: ./Outbox
+    volumes:
+      - "./Outbox:/app/src"
+    ports:
+      - "${CARPOOLING_OUTBOX_PORT}:${HOST_PORT}"
+    env_file:
+      - .env
+
+  carpooling-querier-db:
+    image: mongo
+    container_name: carpooling-querier-db
+    logging:
+      driver: "none"
+    ports:
+#    - "${CARPOOLING_QUERIER_DB_PORT}:${DB_PORT}"
+    - "27020-27022:27017-27019"
+
+  carpooling-querier:
+    container_name: carpooling-querier
+    build: ./Querier
+    volumes:
+      - "./Querier:/app/src"
+    ports:
+      - "${CARPOOLING_QUERIER_PORT}:${HOST_PORT}"
+    depends_on:
+ #     - eventstore
+      - carpooling-querier-db
+    env_file:
+      - .env

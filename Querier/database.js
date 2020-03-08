@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const connectionUrl = 'mongodb://localhost/querier';
+const connectionUrl = 'mongodb://carpooling-querier-db/querier';
 
 mongoose.Promise = global.Promise;
 
