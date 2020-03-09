@@ -8,6 +8,14 @@ function createNew(noteObject) {
     return newRide.save();
 }
 
+function getRidesTo(destination) {
+    return RideModel.find({
+        "arrival.place": {$eq: destination},
+        "departure.date": {$gt: new Date()}
+    })
+}
+
 module.exports = {
     createNew,
+    getRidesTo,
 };

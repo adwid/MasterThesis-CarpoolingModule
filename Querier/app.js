@@ -3,7 +3,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var database = require('./database');
 
-var indexRouter = require('./routes/index');
+var carpoolingRouter = require('./routes/carpooling');
 
 var app = express();
 
@@ -21,6 +21,6 @@ database.open()
 // initialize the event store subscription
 require('./handlers/eventStoreHandler');
 
-app.use('/', indexRouter);
+app.use('/carpooling', carpoolingRouter);
 
 module.exports = app;
