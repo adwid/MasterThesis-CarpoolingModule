@@ -15,6 +15,12 @@ function generateCreateJoinLeaveActivity(request) {
     return activity;
 }
 
+function generateCreateManageActivity(request) {
+    const activity = generateCreateObjectActivity(request, objectFields, isValidManage)
+    if (!activity) return undefined;
+    return activity;
+}
+
 function generateCreateObjectActivity(request, objectFields, funIsValidContent) {
     let activity = undefined;
     if (!request) return undefined;
@@ -74,6 +80,17 @@ function isValidCarpooling(content) {
     return true;
 }
 
+function isValidManage(content) {
+    const fields = ["rideID", "accept", "reject"];
+    if (!content
+        || !fields.every(field => content.hasOwnProperty(field))
+        || !Array.isArray(content.accept)
+        || !Array.isArray(content.reject)) {
+        return false;
+    }
+    return true;
+}
+
 function isIsoDate(str) {
     if (!/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(str)) return false;
     var d = new Date(str);
@@ -93,4 +110,5 @@ function carpoolingNoteToCreateActivity(note) {
 module.exports = {
     generateCreateCarpoolingActivity,
     generateCreateJoinLeaveActivity,
+    generateCreateManageActivity,
 };

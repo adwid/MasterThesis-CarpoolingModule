@@ -7,6 +7,7 @@ const eventCallback = {
     'create':   {dbCallback: db.createNew},
     'join'  :   {dbCallback: db.addToWaitingList},
     'leave' :   {dbCallback: db.removeFromRide},
+    'manage':   {dbCallback: db.managePassengers}
 };
 
 esConnection.subscribeToStream(streamName, false, onNewEvent)

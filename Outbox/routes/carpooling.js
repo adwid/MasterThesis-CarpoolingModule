@@ -7,6 +7,7 @@ const routes = {
     'create':   {inboxRoute:    '/create',  activityGenerator: requestHandler.generateCreateCarpoolingActivity},
     'join':     {inboxRoute:    '/join',    activityGenerator: requestHandler.generateCreateJoinLeaveActivity},
     'leave':    {inboxRoute:    '/leave',   activityGenerator: requestHandler.generateCreateJoinLeaveActivity},
+    'manage':   {inboxRoute:    '/manage',  activityGenerator: requestHandler.generateCreateManageActivity}
 };
 
 router.post('/:route', function(req, res) {
