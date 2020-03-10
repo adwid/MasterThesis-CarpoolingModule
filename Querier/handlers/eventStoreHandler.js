@@ -6,6 +6,7 @@ const streamName = "carpooling";
 const eventCallback = {
     'create':   {dbCallback: db.createNew},
     'join'  :   {dbCallback: db.addToWaitingList},
+    'leave' :   {dbCallback: db.removeFromRide},
 };
 
 esConnection.subscribeToStream(streamName, false, onNewEvent)

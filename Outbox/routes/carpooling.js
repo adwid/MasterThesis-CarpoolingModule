@@ -6,6 +6,7 @@ const axios = require('axios');
 const routes = {
     'create':   {inboxRoute:    '/create',  activityGenerator: requestHandler.generateCreateCarpoolingActivity},
     'join':     {inboxRoute:    '/join',    activityGenerator: requestHandler.generateCreateJoinLeaveActivity},
+    'leave':    {inboxRoute:    '/leave',   activityGenerator: requestHandler.generateCreateJoinLeaveActivity},
 };
 
 router.post('/:route', function(req, res) {
