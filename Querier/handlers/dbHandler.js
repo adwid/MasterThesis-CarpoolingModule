@@ -26,8 +26,23 @@ function addToWaitingList(noteObject) {
     });
 }
 
+function removeFromRide(noteObject) {
+    const rideID = noteObject.content.rideID;
+    let usersID = noteObject.attributedTo;
+
+    return RideModel.findOneAndUpdate({
+        _id: {$eq: rideID}
+    }, {
+        $pull: {
+            waitingList: usersID,
+            passengers: usersID
+        },
+    });
+}
+
 module.exports = {
     addToWaitingList,
     createNew,
     getRidesTo,
+    removeFromRide,
 };

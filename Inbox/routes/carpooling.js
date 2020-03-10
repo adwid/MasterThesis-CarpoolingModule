@@ -6,6 +6,7 @@ const { v1: uuid } = require('uuid');
 const routes = [
     "create",
     "join",
+    "leave",
 ];
 
 /* Post data to event store */
