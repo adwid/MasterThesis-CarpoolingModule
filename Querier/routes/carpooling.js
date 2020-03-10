@@ -15,4 +15,16 @@ router.get('/to', function(req, res, next) {
   });
 });
 
+router.get('/:id', function (req, res) {
+    var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+    db.getRideByID(fullUrl)
+        .then(ride => {
+            res.json(ride);
+        })
+        .catch(err => {
+            console.error("" + err);
+            res.status(500).end();
+        });
+});
+
 module.exports = router;
