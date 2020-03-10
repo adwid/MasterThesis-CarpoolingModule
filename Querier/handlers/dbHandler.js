@@ -15,6 +15,10 @@ function getRidesTo(destination) {
     })
 }
 
+function getRideByID(id) {
+    return RideModel.findById(id);
+}
+
 function addToWaitingList(noteObject) {
     const rideID = noteObject.content.rideID;
     const userID = noteObject.attributedTo;
@@ -92,6 +96,7 @@ function acceptPassengers(rideID, driverID, usersID) {
 module.exports = {
     addToWaitingList,
     createNew,
+    getRideByID,
     getRidesTo,
     managePassengers,
     removeFromRide,
