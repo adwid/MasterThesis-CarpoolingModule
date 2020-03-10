@@ -7,6 +7,7 @@ const routes = [
     "create",
     "join",
     "leave",
+    "manage",
 ];
 
 /* Post data to event store */
