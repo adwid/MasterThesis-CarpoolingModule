@@ -4,7 +4,8 @@ const requestHandler = require('../handlers/requestHandler');
 const axios = require('axios');
 
 const routes = {
-  'create':   {inboxRoute:  '/create',  activityGenerator: requestHandler.generateCreateCarpoolingActivity}
+    'create':   {inboxRoute:    '/create',  activityGenerator: requestHandler.generateCreateCarpoolingActivity},
+    'join':     {inboxRoute:    '/join',    activityGenerator: requestHandler.generateCreateJoinLeaveActivity},
 };
 
 router.post('/:route', function(req, res) {

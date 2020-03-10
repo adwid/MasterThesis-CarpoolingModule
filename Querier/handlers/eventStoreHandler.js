@@ -4,7 +4,8 @@ const db = require('./dbHandler');
 const streamName = "carpooling";
 
 const eventCallback = {
-    'create':   {dbCallback: db.createNew}
+    'create':   {dbCallback: db.createNew},
+    'join'  :   {dbCallback: db.addToWaitingList},
 };
 
 esConnection.subscribeToStream(streamName, false, onNewEvent)

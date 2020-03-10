@@ -9,6 +9,12 @@ function generateCreateCarpoolingActivity(request) {
     return activity;
 }
 
+function generateCreateJoinLeaveActivity(request) {
+    const activity = generateCreateObjectActivity(request, objectFields, isValidJoinLeave)
+    if (!activity) return undefined;
+    return activity;
+}
+
 function generateCreateObjectActivity(request, objectFields, funIsValidContent) {
     let activity = undefined;
     if (!request) return undefined;
@@ -39,6 +45,15 @@ function isValidNote(object, fields, funIsContentValid) {
         || object.mediaType !== "application/json"
         || (!!funIsContentValid && !funIsContentValid(object.content))
     ) return false;
+    return true;
+}
+
+function isValidJoinLeave(content) {
+    if (!content
+        || !content.hasOwnProperty("rideID")
+        || content.rideID === "") {
+        return false;
+    }
     return true;
 }
 
@@ -76,5 +91,6 @@ function carpoolingNoteToCreateActivity(note) {
 }
 
 module.exports = {
-    generateCreateCarpoolingActivity
+    generateCreateCarpoolingActivity,
+    generateCreateJoinLeaveActivity,
 };

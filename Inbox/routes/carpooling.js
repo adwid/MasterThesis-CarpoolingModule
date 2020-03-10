@@ -4,7 +4,8 @@ var esHandler = require('../handlers/eventStoreHandler');
 const { v1: uuid } = require('uuid');
 
 const routes = [
-  "create",
+    "create",
+    "join",
 ];
 
 /* Post data to event store */

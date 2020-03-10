@@ -15,7 +15,19 @@ function getRidesTo(destination) {
     })
 }
 
+function addToWaitingList(noteObject) {
+    const rideID = noteObject.content.rideID;
+    const userID = noteObject.attributedTo;
+    return RideModel.findOneAndUpdate({
+        _id: {$eq: rideID},
+        passengers: {$not: {$elemMatch: {$eq: userID}}}
+    }, {
+        $addToSet: {waitingList: userID}
+    });
+}
+
 module.exports = {
+    addToWaitingList,
     createNew,
     getRidesTo,
 };
