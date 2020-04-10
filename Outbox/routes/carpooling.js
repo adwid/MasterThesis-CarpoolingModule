@@ -10,7 +10,7 @@ const routes = {
     'manage':   {inboxRoute:    '/manage',  activityGenerator: requestHandler.generateCreateManageActivity}
 };
 
-router.post('/:route', function(req, res) {
+router.post('/:route', function(req, res, next) {
   if (!routes.hasOwnProperty(req.params.route)) {
     next();
     return;
