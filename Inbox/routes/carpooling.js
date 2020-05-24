@@ -18,8 +18,8 @@ router.post('/secretary/:route', function(req, res, next) {
   }
   let eventType = req.params.route;
   let activity = req.body;
-  activity.object.id = "http://10.42.0.1:" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/" + uuid();
-  activity.id = "http://10.42.0.1:" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/" + uuid();
+  activity.object.id = process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/" + uuid();
+  activity.id = process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/" + uuid();
   postEvent(activity, eventType, res);
 });
 
