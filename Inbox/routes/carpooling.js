@@ -3,7 +3,7 @@ var router = express.Router();
 var esHandler = require('../handlers/eventStoreHandler');
 const { v1: uuid } = require('uuid');
 
-const routes = [
+const secretaryRoutes = [
     "create",
     "join",
     "leave",
@@ -12,7 +12,7 @@ const routes = [
 
 /* Post data to event store */
 router.post('/secretary/:route', function(req, res, next) {
-  if (!routes.includes(req.params.route)) {
+  if (!secretaryRoutes.includes(req.params.route)) {
     next();
     return;
   }
@@ -21,6 +21,13 @@ router.post('/secretary/:route', function(req, res, next) {
   activity.object.id = process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/" + uuid();
   activity.id = process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/" + uuid();
   postEvent(activity, eventType, res);
+});
+
+router.post('/message', function (req, res) {
+    let activity = req.body;
+    activity.object.id = process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/" + uuid();
+    activity.id = process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/" + uuid();
+    postEvent(activity, "message", res);
 });
 
 function postEvent(activity, eventType, res) {
