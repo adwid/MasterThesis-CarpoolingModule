@@ -53,6 +53,20 @@ function getRideByID(id) {
     return RideModel.findById(id);
 }
 
+/*
+    This is used to filter the actors arrat
+    It returns the intersection between actors and <the union of waitingList and passengers>
+ */
+function getActorsInRide(rideDocument, actors) {
+    const result = [];
+    if (!rideDocument) return result;
+    if (!rideDocument.waitingList || !rideDocument.passengers) return result;
+    for (const actor of actors)
+        if (rideDocument.waitingList.includes(actor) || rideDocument.passengers.includes(actor))
+            result.push(actor);
+    return result;
+}
+
 function addToWaitingList(activity) {
     const noteObject = activity.object;
     const rideID = noteObject.content.rideID;
@@ -89,21 +103,31 @@ function managePassengers(activity) {
     const rideID = noteObject.content.rideID;
     const driverID = noteObject.attributedTo;
     const content = noteObject.content;
-    const promise = Promise.resolve();
+    let acceptActorsPromise = Promise.resolve();
+    let rejectActorsPromise = Promise.resolve();
 
-    if (!content) return Promise.reject("managePassengers not possible: No content in the note object.");
     if (content.reject !== undefined && content.reject.length > 0) {
-        promise.then(_ => {
-            return rejectPassengers(rideID, driverID, content.reject);
-        });
+        rejectActorsPromise = rejectPassengers(rideID, driverID, content.reject);
     }
     if (content.accept !== undefined && content.accept.length > 0) {
-        promise.then(_ => {
-            return acceptPassengers(rideID, driverID, content.accept);
-        });
+        acceptActorsPromise = acceptPassengers(rideID, driverID, content.accept);
     }
 
-    return promise;
+    return rejectActorsPromise.then(oldRideDocument => {
+        return getActorsInRide(oldRideDocument, content.reject)
+    }).then(rejectedActors => {
+        return Promise.all([
+            Promise.resolve(rejectedActors),
+            acceptActorsPromise
+        ])
+    }).then(promisesResult => {
+        return Promise.resolve({
+            rideID: rideID,
+            driver: driverID,
+            rejected: promisesResult[0],
+            accepted: getActorsInRide(promisesResult[1], content.accept)
+        })
+    });
 }
 
 function rejectPassengers(rideID, driverID, usersID) {
