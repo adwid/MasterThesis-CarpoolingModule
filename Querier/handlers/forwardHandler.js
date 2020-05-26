@@ -2,12 +2,13 @@ const { v1: uuid } = require('uuid');
 const axios = require('axios');
 const actorHandler = require('./actorHandler');
 
-function forwardCreateMessage(activityReceived, objectCreated) {
-    const activity = objectToActivity(activityReceived.actor, objectCreated._id, "create");
-    return actorHandler.getInboxAddresses(activityReceived.actor)
+function forwardToDriver(type, dbObject) {
+    const activity = objectToActivity(dbObject.driver, dbObject._id, type);
+    return actorHandler.getInboxAddresses(dbObject.driver)
         .then(addr => {
-            if (addr.length === 0) return Promise.reject("No address found for the actor. " +
-                "Unable to forward the carpooling created");
+            if (addr.length === 0) return Promise.reject("(forwardToDriver) " +
+                "No address found for the driver. " +
+                "Unable to forward the carpooling created.");
             return axios.post(addr[0], activity);
         });
 }
@@ -38,5 +39,5 @@ function objectToActivity(to, id, type) {
 }
 
 module.exports = {
-    forwardCreateMessage,
+    forwardToDriver,
 };

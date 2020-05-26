@@ -11,9 +11,9 @@ const esConnection = esClient.connection();
 const esCredentials = esClient.getCredentials();
 
 const eventCallback = { // todo fwCallbacks
-    'create':   {dbCallback: db.createNew,          fwCallback: fw.forwardCreateMessage},
-    'join'  :   {dbCallback: db.addToWaitingList},
-    'leave' :   {dbCallback: db.removeFromRide},
+    'create':   {dbCallback: db.createNew,          fwCallback: fw.forwardToDriver},
+    'join'  :   {dbCallback: db.addToWaitingList,   fwCallback: fw.forwardToDriver},
+    'leave' :   {dbCallback: db.removeFromRide,     fwCallback: fw.forwardToDriver},
     'manage':   {dbCallback: db.managePassengers},
     'message':  {dbCallback: db.storeMessage,       fwCallback: undefined},
 };
@@ -38,12 +38,13 @@ function onNewEvent(sub, event) {
         return;
     }
     var updateDB = eventCallback[eventType].dbCallback;
-    var fordwardActivity = eventCallback[eventType].fwCallback;
+    var forwardNewObject = eventCallback[eventType].fwCallback;
     updateDB(activity) // Pass the note object of the activity and store it to DB
         .then(objectSaved => {
-            if (!!objectSaved) console.log("Event \'" + eventType + "\': DB updated");
-            if (!fordwardActivity) return Promise.resolve();
-            else return fordwardActivity(activity, objectSaved);
+            if (!objectSaved) return Promise.resolve();
+            console.log("Event \'" + eventType + "\': DB updated");
+            if (!forwardNewObject) return Promise.resolve();
+            else return forwardNewObject(eventType, objectSaved);
         })
         .then(_ => console.log("Event \'" + eventType + "\' correctly processed."))
         .catch(err => console.log("" + err));

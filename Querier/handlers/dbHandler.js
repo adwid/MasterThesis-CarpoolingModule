@@ -68,14 +68,18 @@ function addToWaitingList(activity) {
 function removeFromRide(activity) {
     const noteObject = activity.object;
     const rideID = noteObject.content.rideID;
-    let usersID = noteObject.attributedTo;
+    let userID = noteObject.attributedTo;
 
     return RideModel.findOneAndUpdate({
-        _id: {$eq: rideID}
+        _id: {$eq: rideID},
+        $or: [
+            {waitingList: userID},
+            {passengers: userID}
+        ]
     }, {
         $pull: {
-            waitingList: usersID,
-            passengers: usersID
+            waitingList: userID,
+            passengers: userID
         },
     });
 }
