@@ -73,7 +73,8 @@ function addToWaitingList(activity) {
     const userID = noteObject.attributedTo;
     return RideModel.findOneAndUpdate({
         _id: {$eq: rideID},
-        passengers: {$not: {$elemMatch: {$eq: userID}}}
+        passengers: {$nin: [userID]},
+        waitingList: {$nin: [userID]},
     }, {
         $addToSet: {waitingList: userID}
     });
