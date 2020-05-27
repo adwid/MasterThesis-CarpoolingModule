@@ -2,6 +2,13 @@ const { v1: uuid } = require('uuid');
 const axios = require('axios');
 const actorHandler = require('./actorHandler');
 
+function forwardJoinOrLeaveMessage(type, dbResponse) {
+    return Promise.all([
+        send(dbResponse.driver, dbResponse.rideID, type),
+        send(dbResponse.user, dbResponse.rideID, type === "join" ? "joined" : "leaved")
+    ]);
+}
+
 function forwardManageMessage(type, updateResult) {
     return Promise.all([
         send(updateResult.driver, updateResult.rideID, "manage"),
@@ -60,6 +67,7 @@ function objectToActivity(to, id, type) {
 }
 
 module.exports = {
-    forwardToDriver,
+    forwardJoinOrLeaveMessage,
     forwardManageMessage,
+    forwardToDriver,
 };

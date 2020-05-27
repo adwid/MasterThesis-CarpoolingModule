@@ -77,6 +77,13 @@ function addToWaitingList(activity) {
         waitingList: {$nin: [userID]},
     }, {
         $addToSet: {waitingList: userID}
+    }).then(result => {
+        if (!result) return Promise.resolve();
+        return Promise.resolve({
+            rideID: result._id,
+            driver: result.driver,
+            user: userID
+        })
     });
 }
 
@@ -96,6 +103,13 @@ function removeFromRide(activity) {
             waitingList: userID,
             passengers: userID
         },
+    }).then(result => {
+        if (!result) return Promise.resolve();
+        return Promise.resolve({
+            rideID: result._id,
+            driver: result.driver,
+            user: userID
+        })
     });
 }
 
