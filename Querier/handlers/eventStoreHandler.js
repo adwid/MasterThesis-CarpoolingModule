@@ -10,7 +10,7 @@ const projectionName = "projectionUsedByCarpoolingQuerier";
 const esConnection = esClient.connection();
 const esCredentials = esClient.getCredentials();
 
-const eventCallback = { // todo fwCallbacks
+const eventCallback = {
     'create':   {dbCallback: db.createNew,          fwCallback: fw.forwardToDriver},
     'join'  :   {dbCallback: db.addToWaitingList,   fwCallback: fw.forwardJoinOrLeaveMessage},
     'leave' :   {dbCallback: db.removeFromRide,     fwCallback: fw.forwardJoinOrLeaveMessage},
