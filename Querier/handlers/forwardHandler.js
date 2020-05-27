@@ -2,6 +2,16 @@ const { v1: uuid } = require('uuid');
 const axios = require('axios');
 const actorHandler = require('./actorHandler');
 
+function forwardErrorMessage(actor, rideID, type, message) {
+    send(actor, {
+        "url": rideID,
+        "type": "error",
+        "error": type + ":::" + message,
+    }).then(_ => {
+        console.log("Event \'" + type + "\': user's error detected and handled");
+    });
+}
+
 function forwardJoinOrLeaveMessage(type, dbResponse) {
     return Promise.all([
         send(dbResponse.driver, {"url": dbResponse.rideID, "type": type}),
@@ -64,6 +74,7 @@ function objectToActivity(to, content) {
 }
 
 module.exports = {
+    forwardErrorMessage,
     forwardJoinOrLeaveMessage,
     forwardManageMessage,
     forwardToDriver,

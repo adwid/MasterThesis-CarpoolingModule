@@ -47,7 +47,15 @@ function onNewEvent(sub, event) {
             else return forwardNewObject(eventType, dbRequestResult);
         })
         .then(_ => console.log("Event \'" + eventType + "\' correctly processed."))
-        .catch(err => console.log("" + err));
+        .catch(err => {
+            if (err.name === "ValidationError") {
+                const rideID = activity.object.content.rideID;
+                const errField = Object.keys(err.errors)[0];
+                fw.forwardErrorMessage(activity.actor, rideID, eventType, err.errors[errField].message);
+                return;
+            }
+            console.log("[ERR] ES/onNewEvent : " + err);
+        });
 }
 
 function initProjection() {
