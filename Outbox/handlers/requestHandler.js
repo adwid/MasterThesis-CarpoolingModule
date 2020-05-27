@@ -1,7 +1,7 @@
 const createActivityFields = ["@context", "type", "actor", "object", "to"];
 const objectFields = ["@context", "type", "to", "attributedTo", "content", "mediaType"];
 const carpoolingFields = ["departure.date", "departure.place", "arrival.date", "arrival.place",
-    "driver", "seats", "price", "car.make", "car.model"];
+    "seats", "price", "car.make", "car.model"];
 
 function generateCreateCarpoolingActivity(request) {
     const activity = generateCreateObjectActivity(request, objectFields, isValidCarpooling);
