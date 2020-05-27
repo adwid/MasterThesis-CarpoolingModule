@@ -181,18 +181,18 @@ function storeMessageAux(activity, recipient) {
 }
 
 function acceptPassengers(rideID, driverID, usersID) {
-    // todo https://stackoverflow.com/questions/15627967/why-mongoose-doesnt-validate-on-update
-    return RideModel.findOneAndUpdate({
+    return RideModel.findOne({
         _id: {$eq: rideID},
         driver: {$eq: driverID},
         waitingList: {$all: usersID}
-    }, {
-        $addToSet: {
-            passengers: {$each: usersID}
-        },
-        $pull: {
-            waitingList: {$in: usersID}
-        }
+    }).then(ride => {
+        // we could use findOneAndUpdate but this tricks actually forces the validators (see ride model)
+        ride.waitingList = ride.waitingList.filter(uid => !usersID.includes(uid));
+        usersID.forEach(uid => {
+            if (!ride.passengers.includes(uid))
+                ride.passengers.push(uid)
+        });
+        return ride.save();
     });
 }
 
