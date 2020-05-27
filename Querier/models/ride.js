@@ -36,11 +36,11 @@ const RideSchema = new mongoose.Schema({
         default: [],
         validate: {
             validator: function (array) {
-                if (array.length > this.seatsAvailable) return false;
+                if (array.length > this.seats) return false;
                 return !array.includes(this.driver);
             },
             message: "More passengers than seats AND/OR" +
-                "the driver is one of the passengers"
+                " the driver is one of the passengers"
         },
         required: true
     },
