@@ -4,25 +4,25 @@ const actorHandler = require('./actorHandler');
 
 function forwardJoinOrLeaveMessage(type, dbResponse) {
     return Promise.all([
-        send(dbResponse.driver, dbResponse.rideID, type),
-        send(dbResponse.user, dbResponse.rideID, type === "join" ? "joined" : "leaved")
+        send(dbResponse.driver, {"url": dbResponse.rideID, "type": type}),
+        send(dbResponse.user, {"url": dbResponse.rideID, "type": type === "join" ? "joined" : "leaved"})
     ]);
 }
 
 function forwardManageMessage(type, updateResult) {
     return Promise.all([
-        send(updateResult.driver, updateResult.rideID, "manage"),
-        sendMany(updateResult.rejected, updateResult.rideID, "reject"),
-        sendMany(updateResult.accepted, updateResult.rideID, "accept"),
+        send(updateResult.driver, {"url": updateResult.rideID, "type": "manage"}),
+        sendMany(updateResult.rejected, {"url": updateResult.rideID, "type": "reject"}),
+        sendMany(updateResult.accepted, {"url": updateResult.rideID, "type": "accept"}),
     ])
 }
 
 function forwardToDriver(type, dbObject) {
-    return send(dbObject.driver, dbObject._id, type);
+    return send(dbObject.driver, {"url": dbObject._id, "type": type});
 }
 
-function send(actor, id, type) {
-    const activity = objectToActivity(actor, id, type);
+function send(actor, content) {
+    const activity = objectToActivity(actor, content);
     return actorHandler.getInboxAddresses(actor)
         .then(addr => {
             if (addr.length === 0) return Promise.reject("(send) no inbox addr found.");
@@ -34,15 +34,15 @@ function send(actor, id, type) {
         });
 }
 
-function sendMany(actors, id, type) {
+function sendMany(actors, content) {
     const promises = [];
     for (const actor of actors)
-        promises.push(send(actor, id, type));
+        promises.push(send(actor, content));
     return Promise.all(promises);
 }
 
 // todo NEEDS ADAPTIONS (COMES FROM AGENDA MODULE) (id set here but received on other domains + use outbox to send the message ?)
-function objectToActivity(to, id, type) {
+function objectToActivity(to, content) {
     const secretary = process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + '/carpooling/secretary';
     return {
         "@context": "https://www.w3.org/ns/activitystreams",
@@ -58,10 +58,7 @@ function objectToActivity(to, id, type) {
             "mediaType": "application/json",
             "attributedTo": secretary,
             "to": to,
-            "content": {
-                "url": id,
-                "type": type
-            }
+            "content": content,
         }
     }
 }
