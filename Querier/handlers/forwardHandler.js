@@ -51,7 +51,6 @@ function sendMany(actors, content) {
     return Promise.all(promises);
 }
 
-// todo NEEDS ADAPTIONS (COMES FROM AGENDA MODULE) (id set here but received on other domains + use outbox to send the message ?)
 function objectToActivity(to, content) {
     const secretary = process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + '/carpooling/secretary';
     return {
