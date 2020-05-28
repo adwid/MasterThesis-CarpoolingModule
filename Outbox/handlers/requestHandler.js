@@ -68,7 +68,7 @@ function isValidCarpooling(content) {
     for (var field of carpoolingFields) {
         try {
             var value = field.split('.').reduce((a, b) => a[b], content);
-            if (!value) return false;
+            if (value === undefined) return false;
         } catch (err) {
             return false;
         }
