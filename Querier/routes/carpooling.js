@@ -3,17 +3,18 @@ var router = express.Router();
 const db = require('../handlers/dbHandler');
 const es = require('../handlers/eventStoreHandler');
 
-router.get('/to', function(req, res, next) {
-  if (!req.query.destination || req.query.destination === "")
-    return res.status(400).end();
-  db.getRidesTo(req.query.destination)
-      .then(docs => {
-        res.send(docs);
-      })
-  .catch(err => {
-    console.error("" + err);
-    res.status(500).end();
-  });
+router.get('/search', function(req, res, next) {
+    if (!req.query.hasOwnProperty("departurePlace") || !req.query.hasOwnProperty("arrivalPlace"))
+        return res.status(400).end();
+    db.searchRide(req.query)
+        .then(rides => {
+            if (rides.length === 0) res.status(204).end();
+            else res.json(rides);
+        })
+        .catch(err => {
+            console.error("" + err);
+            res.status(500).end();
+        });
 });
 
 router.get('/content/:id', function (req, res) {

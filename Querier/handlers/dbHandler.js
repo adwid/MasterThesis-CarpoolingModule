@@ -150,6 +150,37 @@ function rejectPassengers(rideID, driverID, usersID) {
     });
 }
 
+function searchRide(queryObject) {
+    const query = {
+        "departure.place": queryObject.departurePlace,
+        "arrival.place": queryObject.arrivalPlace
+    };
+    query["$and"] = [];
+    if (queryObject.hasOwnProperty("departureDate")) {
+        const dateRange = searchRideHelper(queryObject.departureDate);
+        query["$and"].push({"departure.date": {$gte: dateRange.dateBefore}});
+        query["$and"].push({"departure.date": {$lte: dateRange.dateAfter}});
+    }
+    if (queryObject.hasOwnProperty("arrivalDate")) {
+        const dateRange = searchRideHelper(queryObject.arrivalDate);
+        query["$and"].push({"arrival.date": {$gte: dateRange.dateBefore}});
+        query["$and"].push({"arrival.date": {$lte: dateRange.dateAfter}});
+    }
+    if (query["$and"].length === 0) delete query["$and"];
+    return RideModel.find(query);
+}
+
+function searchRideHelper(date) {
+    const dateBefore = new Date(date);
+    const dateAfter = new Date(date);
+    dateBefore.setDate(dateBefore.getDate() - 1);
+    dateAfter.setDate(dateAfter.getDate() + 1);
+    return {
+        dateBefore: dateBefore,
+        dateAfter: dateAfter,
+    }
+}
+
 function storeMessage(activity) {
     const promises = [];
     const to = Array.isArray(activity.to) ? activity.to : [activity.to];
@@ -198,5 +229,6 @@ module.exports = {
     getRidesTo,
     managePassengers,
     removeFromRide,
+    searchRide,
     storeMessage,
 };
