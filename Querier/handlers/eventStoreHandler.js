@@ -44,7 +44,7 @@ function onNewEvent(sub, event) {
             if (!dbRequestResult) return Promise.resolve();
             console.log("Event \'" + eventType + "\': DB updated");
             if (!forwardNewObject) return Promise.resolve();
-            else return forwardNewObject(eventType, dbRequestResult);
+            else return forwardNewObject(eventType, activity.actor, dbRequestResult);
         })
         .then(_ => console.log("Event \'" + eventType + "\' correctly processed."))
         .catch(err => {

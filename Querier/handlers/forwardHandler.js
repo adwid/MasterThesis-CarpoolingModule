@@ -12,23 +12,23 @@ function forwardErrorMessage(actor, rideID, type, message) {
     });
 }
 
-function forwardJoinOrLeaveMessage(type, dbResponse) {
+function forwardJoinOrLeaveMessage(type, from, dbResponse) {
     return Promise.all([
-        send(dbResponse.driver, {"url": dbResponse.rideID, "type": type}),
-        send(dbResponse.user, {"url": dbResponse.rideID, "type": type === "join" ? "joined" : "leaved"})
+        send(dbResponse.driver, {"url": dbResponse.rideID, "from": from, "type": type}),
+        send(dbResponse.user, {"url": dbResponse.rideID, "from": from, "type": type === "join" ? "joined" : "leaved"})
     ]);
 }
 
-function forwardManageMessage(type, updateResult) {
+function forwardManageMessage(type, from, updateResult) {
     return Promise.all([
-        send(updateResult.driver, {"url": updateResult.rideID, "type": "manage"}),
-        sendMany(updateResult.rejected, {"url": updateResult.rideID, "type": "reject"}),
-        sendMany(updateResult.accepted, {"url": updateResult.rideID, "type": "accept"}),
+        send(updateResult.driver, {"url": updateResult.rideID, "from": from, "type": "manage"}),
+        sendMany(updateResult.rejected, {"url": updateResult.rideID, "from": from, "type": "reject"}),
+        sendMany(updateResult.accepted, {"url": updateResult.rideID, "from": from, "type": "accept"}),
     ])
 }
 
-function forwardToDriver(type, dbObject) {
-    return send(dbObject.driver, {"url": dbObject._id, "type": type});
+function forwardToDriver(type, from, dbObject) {
+    return send(dbObject.driver, {"url": dbObject._id, "from":from, "type": type});
 }
 
 function send(actor, content) {
