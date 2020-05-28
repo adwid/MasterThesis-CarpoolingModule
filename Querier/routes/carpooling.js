@@ -28,6 +28,16 @@ router.get('/content/:id', function (req, res) {
         });
 });
 
+router.get("/secretary", (req, res) => {
+    res.json({
+        "@context": "http://www.w3.org/ns/activitystreams",
+        "type": "Application",
+        "name": "Carpooling module secretariat",
+        "summary": "In charge of processing all messages concerning the carpooling module (domain " +
+            process.env.PREFIX + process.env.HOST + ")"
+    })
+});
+
 router.get("/:id", (req, res) => {
     var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
     es.getSpecificObjects([fullUrl])
