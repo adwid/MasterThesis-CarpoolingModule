@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const AppointmentSchema = new mongoose.Schema({
-    date: {type: Date, required: true},
+    date: {type: Date, required: true, min: (new Date()).toISOString()},
     place: {type: String, required: true}
 }, {
     _id: false
@@ -27,9 +27,9 @@ const RideSchema = new mongoose.Schema({
     departure: {type: AppointmentSchema, required: true},
     arrival: {type: AppointmentSchema, required: true},
     driver: {type: String, required: true},
-    seats: {type: Number, required: true},
+    seats: {type: Number, required: true, min: 1},
     options: {type: RideOptionsSchema, required: false},
-    price: {type: Number, required: true},
+    price: {type: Number, required: true, min: 0},
     car: {type: CarSchema, required: true},
     passengers: {
         type: [String],
