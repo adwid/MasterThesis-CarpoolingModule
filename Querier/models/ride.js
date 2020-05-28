@@ -55,4 +55,8 @@ RideSchema.index({
     "driver": 1
 }, {unique: true});
 
+RideSchema.index({"driver": 1});
+RideSchema.index({"passengers": 1});
+RideSchema.index({"waitingList": 1});
+
 module.exports = mongoose.model('Ride', RideSchema);

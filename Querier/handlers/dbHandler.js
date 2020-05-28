@@ -42,10 +42,13 @@ function getOldMessages(uid) {
     });
 }
 
-function getRidesTo(destination) {
+function getRidesWith(id) {
     return RideModel.find({
-        "arrival.place": {$eq: destination},
-        "departure.date": {$gt: new Date()}
+        "$or" : [
+            {driver: id},
+            {passengers: id},
+            {waitingList: id},
+        ]
     })
 }
 
@@ -226,7 +229,7 @@ module.exports = {
     getNewMessages,
     getOldMessages,
     getRideByID,
-    getRidesTo,
+    getRidesWith,
     managePassengers,
     removeFromRide,
     searchRide,

@@ -3,6 +3,20 @@ var router = express.Router();
 const db = require('../handlers/dbHandler');
 const es = require('../handlers/eventStoreHandler');
 
+router.get('/with', function (req, res) {
+    if (!req.query.hasOwnProperty("id"))
+        return res.status(400).end();
+    db.getRidesWith(req.query.id)
+        .then(rides => {
+            if (rides.length === 0) res.status(204).end();
+            else res.json(rides);
+        })
+        .catch(err => {
+            console.error("" + err);
+            res.status(500).end();
+        });
+});
+
 router.get('/search', function(req, res, next) {
     if (!req.query.hasOwnProperty("departurePlace") || !req.query.hasOwnProperty("arrivalPlace"))
         return res.status(400).end();
