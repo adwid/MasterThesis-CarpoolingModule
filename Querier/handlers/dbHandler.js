@@ -118,34 +118,27 @@ function managePassengers(activity) {
     const rideID = noteObject.content.rideID;
     const driverID = noteObject.attributedTo;
     const content = noteObject.content;
-    let acceptActorsPromise = Promise.resolve();
-    let rejectActorsPromise = Promise.resolve();
 
-    if (content.reject !== undefined && content.reject.length > 0) {
-        rejectActorsPromise = rejectPassengers(rideID, driverID, content.reject);
-    }
-    if (content.accept !== undefined && content.accept.length > 0) {
-        acceptActorsPromise = acceptPassengers(rideID, driverID, content.accept);
-    }
-
-    return rejectActorsPromise.then(oldRideDocument => {
-        return getActorsInRide(oldRideDocument, content.reject)
-    }).then(rejectedActors => {
-        return Promise.all([
-            Promise.resolve(rejectedActors),
-            acceptActorsPromise
-        ])
-    }).then(promisesResult => {
-        return Promise.resolve({
-            rideID: rideID,
-            driver: driverID,
-            rejected: promisesResult[0],
-            accepted: getActorsInRide(promisesResult[1], content.accept)
-        })
-    });
+    return rejectPassengers(rideID, driverID, content.reject)
+        .then(oldRideDocument => {
+            return getActorsInRide(oldRideDocument, content.reject)
+        }).then(rejectedActors => {
+            return Promise.all([
+                Promise.resolve(rejectedActors), // pass the rejected users to the next promise
+                acceptPassengers(rideID, driverID, content.accept)
+            ])
+        }).then(promisesResult => {
+            return Promise.resolve({
+                rideID: rideID,
+                driver: driverID,
+                rejected: promisesResult[0],
+                accepted: getActorsInRide(promisesResult[1], content.accept)
+            })
+        });
 }
 
 function rejectPassengers(rideID, driverID, usersID) {
+    if (!usersID || usersID.length === 0) return Promise.resolve();
     return RideModel.findOneAndUpdate({
         _id: {$eq: rideID},
         driver: {$eq: driverID}
