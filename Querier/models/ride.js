@@ -47,4 +47,12 @@ const RideSchema = new mongoose.Schema({
     waitingList: {type: [String], default: [], required: true}
 });
 
+RideSchema.index({
+    "arrival.place": 1,
+    "departure.plate": 1,
+    "departure.date": 1,
+    "arrival.date": 1,
+    "driver": 1
+}, {unique: true});
+
 module.exports = mongoose.model('Ride', RideSchema);

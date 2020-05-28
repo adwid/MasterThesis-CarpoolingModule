@@ -54,6 +54,11 @@ function onNewEvent(sub, event) {
                 fw.forwardErrorMessage(activity.actor, rideID, eventType, err.errors[errField].message);
                 return;
             }
+            if (err.name === "MongoError" && err.code === 11000) {
+                const rideID = activity.object.content.rideID;
+                fw.forwardErrorMessage(activity.actor, rideID, eventType, "Duplication:" + Object.keys(err.keyValue));
+                return;
+            }
             console.log("[ERR] ES/onNewEvent : " + err);
         });
 }
