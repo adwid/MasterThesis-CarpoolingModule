@@ -81,7 +81,7 @@ function addToWaitingList(activity) {
     }, {
         $addToSet: {waitingList: userID}
     }).then(result => {
-        if (!result) return Promise.resolve();
+        if (!result) return Promise.reject({name:"MyNotFoundError", message:"No ride found or you are already part of this ride"});
         return Promise.resolve({
             rideID: result._id,
             driver: result.driver,
@@ -107,7 +107,7 @@ function removeFromRide(activity) {
             passengers: userID
         },
     }).then(result => {
-        if (!result) return Promise.resolve();
+        if (!result) return Promise.reject({name:"MyNotFoundError", message:"No ride found or you are not part of this ride"});
         return Promise.resolve({
             rideID: result._id,
             driver: result.driver,
@@ -137,6 +137,11 @@ function managePassengers(activity) {
                 rejected: promisesResult[0],
                 accepted: getActorsInRide(promisesResult[1], content.accept)
             })
+        }).then(finalResult => {
+            if (finalResult.accepted.length === 0 && finalResult.rejected.length === 0)
+                return Promise.reject({name:"MyNotFoundError", message:"No ride found or " +
+                        "your request has made no change."});
+            return Promise.resolve(finalResult);
         });
 }
 
@@ -213,6 +218,7 @@ function acceptPassengers(rideID, driverID, usersID) {
         driver: {$eq: driverID},
         waitingList: {$all: usersID}
     }).then(ride => {
+        if (!ride) return Promise.resolve();
         // we could use findOneAndUpdate but this tricks actually forces the validators (see ride model)
         ride.waitingList = ride.waitingList.filter(uid => !usersID.includes(uid));
         usersID.forEach(uid => {

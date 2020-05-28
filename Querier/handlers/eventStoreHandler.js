@@ -59,6 +59,11 @@ function onNewEvent(sub, event) {
                 fw.forwardErrorMessage(activity.actor, rideID, eventType, "Duplication:" + Object.keys(err.keyValue));
                 return;
             }
+            if (err.name === "MyNotFoundError") {
+                const rideID = activity.object.content.rideID;
+                fw.forwardErrorMessage(activity.actor, rideID, eventType, err.message);
+                return;
+            }
             console.log("[ERR] ES/onNewEvent : " + err);
         });
 }
