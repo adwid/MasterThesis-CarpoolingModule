@@ -47,25 +47,27 @@ function onNewEvent(sub, event) {
             else return forwardNewObject(eventType, activity.actor, dbRequestResult);
         })
         .then(_ => console.log("Event \'" + eventType + "\' correctly processed."))
-        .catch(err => {
-            if (err.name === "ValidationError") {
-                const rideID = activity.object.content.rideID;
-                const errField = Object.keys(err.errors)[0];
-                fw.forwardErrorMessage(activity.actor, rideID, eventType, err.errors[errField].message);
-                return;
-            }
-            if (err.name === "MongoError" && err.code === 11000) {
-                const rideID = activity.object.content.rideID;
-                fw.forwardErrorMessage(activity.actor, rideID, eventType, "Duplication:" + Object.keys(err.keyValue));
-                return;
-            }
-            if (err.name === "MyNotFoundError") {
-                const rideID = activity.object.content.rideID;
-                fw.forwardErrorMessage(activity.actor, rideID, eventType, err.message);
-                return;
-            }
-            console.log("[ERR] ES/onNewEvent : " + err);
-        });
+        .catch(err => catcher(err, activity, eventType));
+}
+
+function catcher(err, activity, eventType) {
+    if (err.name === "ValidationError") {
+        const rideID = activity.object.content.rideID;
+        const errField = Object.keys(err.errors)[0];
+        fw.forwardErrorMessage(activity.actor, rideID, eventType, err.errors[errField].message);
+        return;
+    }
+    if (err.name === "MongoError" && err.code === 11000) {
+        const rideID = activity.object.content.rideID;
+        fw.forwardErrorMessage(activity.actor, rideID, eventType, "Duplication:" + Object.keys(err.keyValue));
+        return;
+    }
+    if (err.name === "MyNotFoundError") {
+        const rideID = activity.object.content.rideID;
+        fw.forwardErrorMessage(activity.actor, rideID, eventType, err.message);
+        return;
+    }
+    console.log("[ERR] ES/onNewEvent : " + err);
 }
 
 function initProjection() {
