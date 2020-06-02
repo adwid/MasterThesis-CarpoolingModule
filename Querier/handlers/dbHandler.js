@@ -1,5 +1,6 @@
 const RideModel = require('../models/ride');
 const NewsModel = require('../models/news');
+const MessageModel = require('../models/message');
 const { v1: uuid } = require('uuid');
 
 function createNew(activity) {
@@ -9,6 +10,15 @@ function createNew(activity) {
     rideContent.driver = noteObject.attributedTo;
     const newRide = new RideModel(rideContent);
     return newRide.save();
+}
+
+function getActivity(id) {
+    return MessageModel.findOne({
+        $or: [
+            {id: id},
+            {"object.id": id}
+        ]
+    }, "-_id -__v")
 }
 
 function getNewNews(uid) {
@@ -189,6 +199,12 @@ function searchRideHelper(date) {
     }
 }
 
+function storeActivity(activity) {
+    const message = new MessageModel(activity);
+    message._id = activity.id
+    return message.save();
+}
+
 function storeNews(activity) {
     const promises = [];
     const to = Array.isArray(activity.to) ? activity.to : [activity.to];
@@ -232,6 +248,7 @@ function acceptPassengers(rideID, driverID, usersID) {
 module.exports = {
     addToWaitingList,
     createNew,
+    getActivity,
     getNewNews,
     getOldNews,
     getRideByID,
@@ -239,5 +256,6 @@ module.exports = {
     managePassengers,
     removeFromRide,
     searchRide,
+    storeActivity,
     storeNews,
 };
