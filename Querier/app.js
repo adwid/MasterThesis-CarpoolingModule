@@ -4,7 +4,7 @@ var logger = require('morgan');
 var database = require('./database');
 
 var carpoolingRouter = require('./routes/carpooling');
-var messageRouter = require('./routes/message');
+var newsRouter = require('./routes/news');
 
 var app = express();
 
@@ -22,7 +22,7 @@ database.open()
 // initialize the event store subscription
 require('./handlers/eventStoreHandler');
 
-app.use('/carpooling/message', messageRouter);
+app.use('/carpooling/news', newsRouter);
 app.use('/carpooling', carpoolingRouter);
 
 module.exports = app;

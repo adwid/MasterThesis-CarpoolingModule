@@ -15,7 +15,7 @@ const eventCallback = {
     'join'  :   {dbCallback: db.addToWaitingList,   fwCallback: fw.forwardJoinOrLeaveMessage},
     'leave' :   {dbCallback: db.removeFromRide,     fwCallback: fw.forwardJoinOrLeaveMessage},
     'manage':   {dbCallback: db.managePassengers,   fwCallback: fw.forwardManageMessage},
-    'message':  {dbCallback: db.storeMessage,       fwCallback: undefined},
+    'news':     {dbCallback: db.storeNews,          fwCallback: undefined},
 };
 
 esConnection.subscribeToStream(streamName, false, onNewEvent)
