@@ -4,6 +4,13 @@ const MessageModel = require('../models/message');
 const { v1: uuid } = require('uuid');
 
 function createNew(activity) {
+    let actorURL = new URL(activity.actor);
+    if (actorURL.hostname !== process.env.HOST) {
+        return Promise.reject({
+            name: "MyNotFoundError",
+            message: "We have different domain. Please contact your secretary."
+        })
+    }
     const noteObject = activity.object;
     const rideContent = noteObject.content;
     rideContent._id = process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/content/" + uuid();
