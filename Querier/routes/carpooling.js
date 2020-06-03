@@ -47,7 +47,7 @@ router.get("/secretary", (req, res) => {
         "@context": "http://www.w3.org/ns/activitystreams",
         "id": process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/secretary",
         "type": "Application",
-        "name": "Carpooling module secretariat",
+        "name": "Carpooling module secretary",
         "summary": "In charge of processing all messages concerning the carpooling module (domain " +
             process.env.PREFIX + process.env.HOST + ")",
         "inbox": process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_INBOX_PORT + "/carpooling/secretary",
