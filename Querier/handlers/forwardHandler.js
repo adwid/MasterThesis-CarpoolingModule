@@ -14,10 +14,7 @@ function forwardErrorMessage(actor, rideID, type, message) {
 }
 
 function forwardJoinOrLeaveMessage(type, from, dbResponse) {
-    return Promise.all([
-        send(dbResponse.driver, {"url": dbResponse.rideID, "from": from, "type": type}),
-        send(dbResponse.user, {"url": dbResponse.rideID, "from": from, "type": type === "join" ? "joined" : "leaved"})
-    ]);
+    return sendMany([dbResponse.driver, dbResponse.user], {"url": dbResponse.rideID, "from": from, "type": type});
 }
 
 function forwardManageMessage(type, from, updateResult) {
