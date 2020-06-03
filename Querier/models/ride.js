@@ -31,6 +31,7 @@ const RideSchema = new mongoose.Schema({
     options: {type: RideOptionsSchema, required: false},
     price: {type: Number, required: true, min: 0},
     car: {type: CarSchema, required: true},
+    available: {type: Boolean, required: true},
     passengers: {
         type: [String],
         default: [],

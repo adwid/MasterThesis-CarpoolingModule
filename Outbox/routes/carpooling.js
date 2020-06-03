@@ -7,10 +7,12 @@ const { v1: uuid } = require('uuid');
 const actorHandler = require('../handlers/actorHandler');
 
 const routes = {
+    'close':    {inboxRoute: '/close',   activityGenerator: requestHandler.generateCreateJoinLeaveActivity},
     'create':   {inboxRoute: '/create', activityGenerator: requestHandler.generateCreateCarpoolingActivity},
     'join':     {inboxRoute: '/join',   activityGenerator: requestHandler.generateCreateJoinLeaveActivity},
     'leave':    {inboxRoute: '/leave',  activityGenerator: requestHandler.generateCreateJoinLeaveActivity},
-    'manage':   {inboxRoute: '/manage', activityGenerator: requestHandler.generateCreateManageActivity}
+    'manage':   {inboxRoute: '/manage', activityGenerator: requestHandler.generateCreateManageActivity},
+    'open':     {inboxRoute: '/open',   activityGenerator: requestHandler.generateCreateJoinLeaveActivity},
 };
 
 router.post('/:route', function(req, res, next) {

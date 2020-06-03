@@ -3,10 +3,12 @@ var router = express.Router();
 var esHandler = require('../handlers/eventStoreHandler');
 
 const secretaryRoutes = [
+    "close",
     "create",
     "join",
     "leave",
     "manage",
+    "open",
 ];
 
 /* Post data to event store */

@@ -6,11 +6,13 @@ const streamName = "carpooling";
 const esConnection = esClient.connection();
 
 const eventCallback = {
+    'close':    {dbCallback: db.closeRide,          fwCallback: fw.forwardToDriver},
     'create':   {dbCallback: db.createNew,          fwCallback: fw.forwardToDriver},
     'join'  :   {dbCallback: db.addToWaitingList,   fwCallback: fw.forwardJoinOrLeaveMessage},
     'leave' :   {dbCallback: db.removeFromRide,     fwCallback: fw.forwardJoinOrLeaveMessage},
     'manage':   {dbCallback: db.managePassengers,   fwCallback: fw.forwardManageMessage},
     'news':     {dbCallback: db.storeNews,          fwCallback: undefined},
+    'open':     {dbCallback: db.openRide,           fwCallback: fw.forwardToDriver},
 };
 
 esConnection.subscribeToStream(streamName, false, onNewEvent)

@@ -3,6 +3,31 @@ const NewsModel = require('../models/news');
 const MessageModel = require('../models/message');
 const { v1: uuid } = require('uuid');
 
+function closeRide(activity) {
+    return closeOrOpenRide(activity, false);
+}
+
+function closeOrOpenRide(activity, available) {
+    const noteObject = activity.object;
+    const rideID = noteObject.content.rideID;
+    const driverID = noteObject.attributedTo;
+    return RideModel.findOneAndUpdate({
+        _id: rideID,
+        driver: driverID,
+        available: !available,
+    }, {
+        $set: {available: available}
+    }).then(ride => {
+        if (!ride) return Promise.reject({
+            name: "MyNotFoundError",
+            message: "You do not have the permission, " +
+                "the ride does not exist, " +
+                "or the ride is already (un)available."
+        });
+        return Promise.resolve(ride);
+    });
+}
+
 function createNew(activity) {
     let actorURL = new URL(activity.actor);
     if (actorURL.hostname !== process.env.HOST) {
@@ -15,6 +40,7 @@ function createNew(activity) {
     const rideContent = noteObject.content;
     rideContent._id = process.env.PREFIX + process.env.HOST + ":" + process.env.CARPOOLING_QUERIER_PORT + "/carpooling/content/" + uuid();
     rideContent.driver = noteObject.attributedTo;
+    rideContent.available = true;
     const newRide = new RideModel(rideContent);
     return newRide.save();
 }
@@ -93,12 +119,13 @@ function addToWaitingList(activity) {
     const userID = noteObject.attributedTo;
     return RideModel.findOneAndUpdate({
         _id: {$eq: rideID},
+        available: true,
         passengers: {$nin: [userID]},
         waitingList: {$nin: [userID]},
     }, {
         $addToSet: {waitingList: userID}
     }).then(result => {
-        if (!result) return Promise.reject({name:"MyNotFoundError", message:"No ride found or you are already part of this ride"});
+        if (!result) return Promise.reject({name:"MyNotFoundError", message:"No ride found, ride closed, or you are already part of this ride"});
         return Promise.resolve({
             rideID: result._id,
             driver: result.driver,
@@ -160,6 +187,10 @@ function managePassengers(activity) {
                         "your request has made no change."});
             return Promise.resolve(finalResult);
         });
+}
+
+function openRide(activity) {
+    return closeOrOpenRide(activity, true);
 }
 
 function rejectPassengers(rideID, driverID, usersID) {
@@ -254,6 +285,7 @@ function acceptPassengers(rideID, driverID, usersID) {
 
 module.exports = {
     addToWaitingList,
+    closeRide,
     createNew,
     getActivity,
     getNewNews,
@@ -262,6 +294,7 @@ module.exports = {
     getRidesWith,
     managePassengers,
     removeFromRide,
+    openRide,
     searchRide,
     storeActivity,
     storeNews,
