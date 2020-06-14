@@ -36,6 +36,7 @@ describe("[Carpooling] Basic scenario", function () {
             });
     })
 
+    this.slow(common.slow);
     beforeEach(done => setTimeout(done, common.timeout));
 
     it("should get the secretary's profile", function (done) {

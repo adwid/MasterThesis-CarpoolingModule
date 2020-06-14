@@ -37,6 +37,7 @@ describe("[Carpooling] Validations", function () {
             });
     })
 
+    this.slow(common.slow);
     beforeEach(done => setTimeout(done, common.timeout));
 
     describe("an actor can not create the same carpooling twice", function () {

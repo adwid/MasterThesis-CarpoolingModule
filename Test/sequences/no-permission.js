@@ -36,6 +36,7 @@ describe("[Carpooling] No permission", function () {
             });
     })
 
+    this.slow(common.slow);
     beforeEach(done => setTimeout(done, common.timeout));
 
     describe("actor[0] creates a new ride", function () {
